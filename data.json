@@ -1,0 +1,20 @@
+{
+  "school_name": "GURUKUL CONVENT SCHOOL",
+  "director": "Mr. Shailaish Pandey",
+  "principal": "Mrs. Neha Pandey",
+  "vice_principal": "Mr. Ram Jit Yadav",
+  "system_manager": "Mr. Mustkeem Sir",
+  "school_timing": "10 AM to 3 PM",
+  "fees": "₹2000 per month",
+
+  "teachers": {
+    "chemistry": "Mr. Kuldeep Sir",
+    "physics": "Mr. Manish Mishra",
+    "english": "Mr. Mohsin Khan",
+    "math": "Mr. Manoj Dwivedi",
+    "biology": "Mrs. Vibha Mam",
+    "hindi": "Mrs. Kanchan Shukla"
+  },
+
+  "features": "AC Rooms, Best Infrastructure, Certified Teachers, Inter-House Competitions"
+}
