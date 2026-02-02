@@ -1,98 +1,69 @@
-school_data = {
-    "school_name": "Gurukul Convent School",
-    "timing": "10:00 AM to 3:00 PM",
+from flask import Flask, render_template, request, jsonify
+from data import school_data
 
-    "management": {
-        "director": "Mr. Shailesh Pandey",
-        "principal": "Mrs. Neha Pandey",
-        "vice_principal": "Mr. Ram Jit Yadav",
-        "system_manager": "Mr. Mustkeem Sir"
-    },
+app = Flask(__name__)
 
-    "teachers": {
-        "chemistry": {
-            "name": "Mr. Kuldeep Kumar",
-            "designation": "Lecturer Chemistry",
-            "qualification": "B.Sc, M.A, D.El.Ed, B.Ed"
-        },
-        "physics": {
-            "name": "Mr. Manish Mishra"
-        },
-        "biology": {
-            "name": "Mrs. Vibha",
-            "designation": "Lecturer Biology",
-            "qualification": "M.Sc, B.Ed"
-        },
-        "maths": {
-            "name": "Mr. Manoj Dwivedi",
-            "designation": "Maths Teacher",
-            "qualification": "M.Sc, B.Ed"
-        },
-        "english": {
-            "name": "Mr. Mohsin Khan"
-        },
-        "hindi": {
-            "name": "Mrs. Kanchan Shukla"
-        }
-    },
+def reply(msg):
+    msg = msg.lower()
 
-    "class_11": {
-        "fee": "₹2000 per month",
-        "boys": [
-            "Shashi Kapoor", "Prince Bharti", "Raunak Shukla",
-            "Siddharth Srivastav", "Neeraj Kumar", "Aditya Jaiswal",
-            "Anuj Chaubey", "Vicky Agrahari", "Zaid",
-            "Yuvraj Yadav", "Prem Sagar"
-        ],
-        "girls": [
-            "Srushti Tripthi", "Sahista Khatoon", "Ishika Singh",
-            "Khushi Agrahari", "Kritika Agrahari", "Khushi Soni",
-            "Saziya Khatoon", "Sristy Bharti", "Aafrin Khan",
-            "Samayara", "Eram", "Rawan Siddique",
-            "Prasansa", "Janvi Singh", "Aditi"
-        ]
-    },
+    if "school name" in msg:
+        return school_data["school_name"]
 
-    "features": [
-        "AC Rooms",
-        "Best Infrastructure",
-        "Best Certified Teachers",
-        "Inter House Competitions",
-        "Science Exhibition",
-        "Sports Facilities",
-        "Online Classes",
-        "Well Equipped Laboratories"
-    ],
+    if "timing" in msg or "school time" in msg:
+        return school_data["timing"]
 
-    "houses": ["Yellow House", "Red House", "Blue House", "Green House"],
+    if "director" in msg:
+        return school_data["management"]["director"]
 
-    "sports": [
-        "Cricket (Boys & Girls)",
-        "Kho-Kho (Boys & Girls)",
-        "Chess (Boys & Girls)",
-        "Carrom (Boys & Girls)",
-        "Shuttle Race (Boys & Girls)",
-        "Badminton (Boys & Girls)",
-        "Volleyball (Boys)",
-        "Hit the Stump (Girls)",
-        "Long Jump (Boys & Girls)"
-    ],
+    if "principal" in msg:
+        return school_data["management"]["principal"]
 
-    "activities": [
-        "Annual Sports Competition",
-        "Debate Competition",
-        "Rangoli Competition",
-        "Science Exhibition",
-        "Dance Competition",
-        "Educational Tours"
-    ],
+    if "vice" in msg:
+        return school_data["management"]["vice_principal"]
 
-    "admission_documents": [
-        "Birth Certificate (self-attested copy)",
-        "Aadhaar Card",
-        "Address Proof",
-        "Passport-size photographs",
-        "Transfer Certificate (if applicable)",
-        "Previous School Report Card"
-    ]
-}
+    if "system manager" in msg:
+        return school_data["management"]["system_manager"]
+
+    for subject, data in school_data["teachers"].items():
+        if subject in msg and "teacher" in msg:
+            if isinstance(data, dict):
+                return f"{data['name']} ({data.get('qualification','')})"
+            return data["name"]
+
+    if "fee" in msg:
+        return f"Class 11 fee is {school_data['class_11']['fee']}"
+
+    if "boys" in msg:
+        return ", ".join(school_data["class_11"]["boys"])
+
+    if "girls" in msg:
+        return ", ".join(school_data["class_11"]["girls"])
+
+    if "feature" in msg or "facility" in msg:
+        return ", ".join(school_data["features"])
+
+    if "house" in msg:
+        return ", ".join(school_data["houses"])
+
+    if "sport" in msg or "game" in msg:
+        return ", ".join(school_data["sports"])
+
+    if "activity" in msg or "competition" in msg:
+        return ", ".join(school_data["activities"])
+
+    if "admission" in msg or "document" in msg:
+        return ", ".join(school_data["admission_documents"])
+
+    return "Please ask about teachers, fees, timing, admission, sports, or school details."
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_msg = request.json["message"]
+    return jsonify({"reply": reply(user_msg)})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
